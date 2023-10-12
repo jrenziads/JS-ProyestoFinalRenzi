@@ -1,14 +1,5 @@
-const coeficientes = {
-  2: 0.1782,
-  3: 0.2375,
-  4: 0.2988,
-  5: 0.3619,
-  6: 0.1695,
-  9: 0.6741,
-  12: 0.9121,
-  18: 1.4350,
-};
-
+//Para tercer pre entrega. Carrito de venta de accesorios Toyota
+// me traigo lo que necesito del html con dom.
 const cards = document.getElementById("cards");
 const templateCard = document.getElementById("template-card").content;
 const items = document.getElementById("items");
@@ -68,12 +59,9 @@ const addCarrito = (e) => {
 const setCarrito = (item) => {
   const producto = {
     title: item.querySelector("h5").textContent,
-    precio: parseFloat(item.querySelector("p").textContent),
+    precio: item.querySelector("p").textContent,
     id: item.querySelector(".btn-dark").dataset.id,
     cantidad: 1,
-    cuotas: 1, // 
-    recargo: 0,
-    precioTotal: 0,
   };
 
   if (carrito.hasOwnProperty(producto.id)) {
@@ -87,17 +75,13 @@ const setCarrito = (item) => {
 const pintarCarrito = () => {
   items.innerHTML = "";
   Object.values(carrito).forEach((producto) => {
-    const { id, title, cantidad, precio, cuotas } = producto;
-    const coeficiente = coeficientes[cuotas];
-    producto.recargo = precio * coeficiente;
-    producto.precioTotal = cuotas === 1 ? precio : precio + producto.recargo;
-
+    const { id, title, cantidad, precio } = producto;
     templateCarrito.querySelector("th").textContent = id;
     templateCarrito.querySelectorAll("td")[0].textContent = title;
     templateCarrito.querySelectorAll("td")[1].textContent = cantidad;
     templateCarrito.querySelector(".btn-info").dataset.id = id;
     templateCarrito.querySelector(".btn-danger").dataset.id = id;
-    templateCarrito.querySelector("span").textContent = cantidad * producto.precioTotal;
+    templateCarrito.querySelector("span").textContent = cantidad * precio;
     const clone = templateCarrito.cloneNode(true);
     fragment.appendChild(clone);
   });
@@ -113,8 +97,8 @@ const pintarFooter = () => {
   footer.innerHTML = "";
   if (Object.keys(carrito).length === 0) {
     footer.innerHTML = `
-          <th scope="row" colspan="5">Carrito vacío - comience a comprar!</th>
-          `;
+			<th scope="row" colspan="5">Carrito vacío - comience a comprar!</th>
+			`;
     return;
   }
 
@@ -123,7 +107,7 @@ const pintarFooter = () => {
     0
   );
   const nPrecio = Object.values(carrito).reduce(
-    (acc, { cantidad, precioTotal }) => acc + cantidad * precioTotal,
+    (acc, { cantidad, precio }) => acc + cantidad * precio,
     0
   );
 
@@ -161,26 +145,3 @@ const btnAccion = (e) => {
 
   e.stopPropagation();
 };
-
-const cuotasInput = document.getElementById("cuotas");
-
-cuotasInput.addEventListener("change", () => {
-  const cuotas = parseInt(cuotasInput.value);
-
-  if (cuotas >= 1 && cuotas <= 18) {
-    for (const id in carrito) {
-      if (carrito.hasOwnProperty(id)) {
-        const producto = carrito[id];
-        producto.cuotas = cuotas;
-
-        const coeficiente = coeficientes[cuotas];
-        producto.recargo = producto.precio * coeficiente;
-        producto.precioTotal = cuotas === 1 ? producto.precio : producto.precio + producto.recargo;
-      }
-    }
-
-    pintarCarrito();
-  } else {
-    alert("La cantidad de cuotas debe estar entre 1 y 18.");
-  }
-});
