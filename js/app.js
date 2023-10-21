@@ -1,5 +1,14 @@
-//Para tercer pre entrega. Carrito de venta de accesorios Toyota
-// me traigo lo que necesito del html con dom.
+const coeficientes = {
+  2: 0.1782,
+  3: 0.2375,
+  4: 0.2988,
+  5: 0.3619,
+  6: 0.1695,
+  9: 0.6741,
+  12: 0.9121,
+  18: 1.4350,
+};
+
 const cards = document.getElementById("cards");
 const templateCard = document.getElementById("template-card").content;
 const items = document.getElementById("items");
@@ -27,7 +36,7 @@ items.addEventListener("click", (e) => {
 
 const fetchData = async () => {
   try {
-    const res = await fetch("vehiculos.json");
+    const res = await fetch("./vehiculos.json");
     const data = await res.json();
     pintarCard(data);
   } catch (error) {
@@ -97,7 +106,7 @@ const pintarFooter = () => {
   footer.innerHTML = "";
   if (Object.keys(carrito).length === 0) {
     footer.innerHTML = `
-			<th scope="row" colspan="5">Carrito vacío - comience a comprar!</th>
+			<th scope="row" colspan="5">Carrito vacío - compre su 0KM!</th>
 			`;
     return;
   }
